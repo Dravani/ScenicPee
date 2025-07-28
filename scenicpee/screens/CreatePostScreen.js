@@ -11,21 +11,37 @@ export default function CreatePostScreen() {
 
   useEffect(() => {
     (async () => {
-      await ImagePicker.requestCameraPermissionsAsync();
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
-      await Location.requestForegroundPermissionsAsync();
+      const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
+      const { status: mediaStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const { status: locationStatus } = await Location.requestForegroundPermissionsAsync();
+  
+      if (cameraStatus !== 'granted') {
+        alert('Camera permission not granted!');
+      }
     })();
   }, []);
-
+  
   const pickImage = async () => {
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.6,
-    });
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
+    try {
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ['images'],
+        quality: 0.6,
+      });
+  
+      console.log('Camera Result:', result);
+  
+      if (!result.canceled && result.assets.length > 0) {
+        setImage(result.assets[0].uri);
+      } else {
+        console.log('User canceled or no image returned.');
+      }
+    } catch (error) {
+      console.error('Error launching camera:', error);
+      alert('Something went wrong while opening the camera.');
     }
   };
+  
+  
 
   const getLocation = async () => {
     const loc = await Location.getCurrentPositionAsync({});
