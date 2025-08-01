@@ -3,7 +3,7 @@ import { View, Text, Button, Image, TextInput, ActivityIndicator, StyleSheet } f
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 
-export default function CreatePostScreen() {
+const CreatePostScreen = ({navigation}) => {
   const [image, setImage] = useState(null);
   const [location, setLocation] = useState(null);
   const [caption, setCaption] = useState('');
@@ -82,3 +82,5 @@ const styles = StyleSheet.create({
     padding: 8,
   },
 });
+
+export default CreatePostScreen;
