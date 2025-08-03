@@ -60,7 +60,7 @@ const CreatePostScreen = ({navigation}) => {
       alert("Image and Location must be present");
       return;
     }
-  
+    if (caption === "") {caption = "empty";} 
     const data = {
       caption: caption,
       location: location, 
