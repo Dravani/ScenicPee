@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button, Image, TextInput, ActivityIndicator, StyleSheet } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../firebase'
 
 const CreatePostScreen = ({navigation}) => {
   const [image, setImage] = useState(null);
@@ -17,6 +19,12 @@ const CreatePostScreen = ({navigation}) => {
   
       if (cameraStatus !== 'granted') {
         alert('Camera permission not granted!');
+      }
+      if (mediaStatus !== 'granted') {
+        alert('Media permission not granted!');
+      }
+      if (locationStatus !== 'granted') {
+        alert('Location permission not granted!');
       }
     })();
   }, []);
@@ -41,11 +49,27 @@ const CreatePostScreen = ({navigation}) => {
     }
   };
   
-  
-
   const getLocation = async () => {
     const loc = await Location.getCurrentPositionAsync({});
     setLocation(loc.coords);
+  };
+
+  const createPost = async () => {
+    if (image == null || location == null) {
+      console.error("image or locaiton cannot be null");
+      alert("Image and Location must be present");
+      return;
+    }
+  
+    const data = {
+      caption: caption,
+      location: location, 
+      image: image, 
+    }
+
+    const res = await addDoc(collection(db, "Posts"), data);
+    console.log(res);
+
   };
 
   return (
@@ -64,6 +88,7 @@ const CreatePostScreen = ({navigation}) => {
         onChangeText={setCaption}
         style={styles.input}
       />
+      <Button title="Post Pee" onPress={createPost} />
     </View>
   );
 }
